@@ -12,7 +12,7 @@ parse_blastxml <- function(.xml, .col = NULL, .multi = FALSE) {
       "Iteration_query-def",
       "Iteration_query-len"
     )
-    iteration <- purrr::map_dfc(iteration_col, get_xml_text, .xml = .xml)
+    iteration <- purrr::map_dfc(iteration_col, GetXmlText, .xml = .xml)
 
     # get hit table.
     hit_col <- list(
@@ -22,7 +22,7 @@ parse_blastxml <- function(.xml, .col = NULL, .multi = FALSE) {
       "Hit_accession",
       "Hit_len"
     )
-    hit <- purrr::map_dfc(hit_col, get_xml_text, .xml = .xml)
+    hit <- purrr::map_dfc(hit_col, GetXmlText, .xml = .xml)
     # get hsp table.
     hsp_col <- list(
       "Hsp_num",
@@ -41,7 +41,7 @@ parse_blastxml <- function(.xml, .col = NULL, .multi = FALSE) {
       "Hsp_align-len",
       "Hsp_hseq"
     )
-    hsp <- purrr::map_dfc(hsp_col, get_xml_text, .xml = .xml)
+    hsp <- purrr::map_dfc(hsp_col, GetXmlText, .xml = .xml)
 
     # bind hit and hsp.
     hit_hsp <- bind_cols(hit, hsp) %>%
@@ -66,7 +66,7 @@ parse_blastxml <- function(.xml, .col = NULL, .multi = FALSE) {
 }
 
 
-get_xml_text <- function(.xml, .xpath) {
+GetXmlText <- function(.xml, .xpath) {
   xml2::xml_find_all(.xml, paste0("//", .xpath)) %>%
     xml2::xml_text()
 }

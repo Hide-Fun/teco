@@ -16,17 +16,17 @@ fasta_to_table <- function(.fasta, .col_name = X1) {
   df <- .fasta %>%
     tibble::rownames_to_column("rowname") %>%
     dplyr::mutate(rowname = readr::parse_integer(rowname))
-  # select OTU rows and sequence rows.
-  OTU <-  df %>%
+  # select otu rows and sequence rows.
+  otu <-  df %>%
     dplyr::filter(rowname %% 2 != 0 ) %>%
-    dplyr::rename(OTU := !!col_name) %>%
-    dplyr::mutate(OTU = stringr::str_remove(OTU, ">")) %>%
-    dplyr::select(OTU)
+    dplyr::rename(otu := !!col_name) %>%
+    dplyr::mutate(otu = stringr::str_remove(otu, ">")) %>%
+    dplyr::select(otu)
   sequence <- df %>%
     dplyr::filter(rowname %% 2 == 0) %>%
     dplyr::rename(sequence := !!col_name) %>%
     dplyr::select(sequence)
-  # bind cols of OTU and sequence.
-  rlt <- dplyr::bind_cols(OTU, sequence)
+  # bind cols of otu and sequence.
+  rlt <- dplyr::bind_cols(otu, sequence)
   return(rlt)
 }

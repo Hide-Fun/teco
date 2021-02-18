@@ -10,9 +10,9 @@ parse_gbxml <- function(.xml) {
   # split xml.
   # each GBSeq stored in list.
   gbseq_list <- purrr::map(1:size, SplitGBset, .list = list)
-  feature_table_list <- purrr::map(gbseq_list, pluck, "GBSeq_feature-table", "GBFeature", "GBFeature_quals")
-  other_seqids_list <- purrr::map(gbseq_list, pluck, "GBSeq_other-seqids")
-  references_list <- purrr::map(gbseq_list, pluck, "GBSeq_references", "GBReference")
+  feature_table_list <- purrr::map(gbseq_list, purrr::pluck, "GBSeq_feature-table", "GBFeature", "GBFeature_quals")
+  other_seqids_list <- purrr::map(gbseq_list, purrr::pluck, "GBSeq_other-seqids")
+  references_list <- purrr::map(gbseq_list, purrr::pluck, "GBSeq_references", "GBReference")
 
   # parse gbseq_list.
   lev_gbeq <- list("GBSeq_locus",
@@ -68,7 +68,7 @@ parse_gbxml <- function(.xml) {
                   value2 = purrr::map(value2, paste0, collapse = "_")) %>%
     tibble::add_column(name2 = "GBSeqid") %>%
     tidyr::unnest(c(name2, value2)) %>%
-    select(id, name2, value2) %>%
+    dplyr::select(id, name2, value2) %>%
     tidyr::pivot_wider(names_from = "name2", values_from = "value2") %>%
     dplyr::select(-id)
 
@@ -77,7 +77,7 @@ parse_gbxml <- function(.xml) {
     stop("row number is not correct")
   }
   # bind all data.
-  rlt <- bind_cols(
+  rlt <- dplyr::bind_cols(
     gbseq, other_seqids, references, feature_table
   )
   return(rlt)
@@ -108,7 +108,8 @@ MapGetValue <- function( .list, .names, .f = GetValue) {
 # make colname pattern.
 PatColnames <- function(.x) {
   len <- length(.x)
-  colname <- paste0("...", 1:len)
-  set_names(nm = colname,
-            x = unlist(.x))
+  colname <- paste0("...", rev(1:len))
+  rlang::set_names(nm = colname,
+                   x = rev(unlist(.x)))
 }
+

@@ -12,7 +12,8 @@ parse_blastxml <- function(.xml, .col = NULL, .multi = FALSE) {
       "Iteration_query-def",
       "Iteration_query-len"
     )
-    iteration <- purrr::map_dfc(iteration_col, GetXmlText, .xml = .xml)
+    iteration <- purrr::map_dfc(iteration_col, GetXmlText, .xml = .xml) %>%
+      dplyr::rename_with(.cols = dplyr::everything(), .fn = stringr::str_replace_all, pattern = PatColnames(.x = iteration_col))
 
     # get hit table.
     hit_col <- list(
@@ -22,7 +23,9 @@ parse_blastxml <- function(.xml, .col = NULL, .multi = FALSE) {
       "Hit_accession",
       "Hit_len"
     )
-    hit <- purrr::map_dfc(hit_col, GetXmlText, .xml = .xml)
+    hit <- purrr::map_dfc(hit_col, GetXmlText, .xml = .xml) %>%
+      dplyr::rename_with(.cols = dplyr::everything(), .fn = stringr::str_replace_all, pattern = PatColnames(.x = hit_col))
+
     # get hsp table.
     hsp_col <- list(
       "Hsp_num",
@@ -41,14 +44,16 @@ parse_blastxml <- function(.xml, .col = NULL, .multi = FALSE) {
       "Hsp_align-len",
       "Hsp_hseq"
     )
-    hsp <- purrr::map_dfc(hsp_col, GetXmlText, .xml = .xml)
+
+    hsp <- purrr::map_dfc(hsp_col, GetXmlText, .xml = .xml) %>%
+      dplyr::rename_with(.cols = dplyr::everything(), .fn = stringr::str_replace_all, pattern = PatColnames(.x = hsp_col))
 
     # bind hit and hsp.
-    hit_hsp <- bind_cols(hit, hsp) %>%
-      dplyr::mutate(Hit_num = parse_number(Hit_num),
-                    Hsp_evalue = parse_number(Hsp_evalue),
-                    Hsp_identity = parse_number(Hsp_identity),
-                    `Hsp_align-len` = parse_number(`Hsp_align-len`))
+    hit_hsp <- dplyr::bind_cols(hit, hsp) %>%
+      dplyr::mutate(Hit_num = readr::parse_number(Hit_num),
+                    Hsp_evalue = readr::parse_number(Hsp_evalue),
+                    Hsp_identity = readr::parse_number(Hsp_identity),
+                    `Hsp_align-len` = readr::parse_number(`Hsp_align-len`))
     # add id.
     hit_hsp_id <- row_number_to_group(hit_hsp,
                                       .col_of_row_number = "Hit_num",
@@ -69,4 +74,12 @@ parse_blastxml <- function(.xml, .col = NULL, .multi = FALSE) {
 GetXmlText <- function(.xml, .xpath) {
   xml2::xml_find_all(.xml, paste0("//", .xpath)) %>%
     xml2::xml_text()
+}
+
+# make colname pattern.
+PatColnames <- function(.x) {
+  len <- length(.x)
+  colname <- paste0("...", rev(1:len))
+  rlang::set_names(nm = colname,
+                   x = rev(unlist(.x)))
 }

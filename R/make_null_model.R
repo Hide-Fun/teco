@@ -14,10 +14,11 @@ make_null_model <- function(.n,
                             .binary,
                             #.f = c("permatfull", "permatswap", "randomizeMatrix"),
                             ...){
+  message("This function use furrr package internally.\nIf you run this function in parallel, set a `plan` for how the code should run.")
   # make empty matrix.
   null_model <- matrix(nrow = nrow(.mat) * (nrow(.mat) - 1) / 2, ncol = .n)
   # insert value.
-  null_model <- purrr::map_dfr(.x = .mat,
+  null_model <- furrr::future_map_dfr(.x = .mat,
                                .f = CalcNullModel,
                                .mat = .mat,
                                .model_type = .model_type,

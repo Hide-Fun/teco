@@ -5,6 +5,7 @@
 #' @param .multi logical, (not inplemented)
 #' @export
 parse_blastxml <- function(.xml, .col = NULL, .multi = FALSE) {
+  message("This function use furrr package internally.\nIf you run this function in parallel, set a `plan` for how the code should run.")
   if(is.null(.col)) {
     # get iteration id.
     iteration_col <- list(
@@ -12,7 +13,7 @@ parse_blastxml <- function(.xml, .col = NULL, .multi = FALSE) {
       "Iteration_query-def",
       "Iteration_query-len"
     )
-    iteration <- purrr::map_dfc(iteration_col, GetXmlText, .xml = .xml) %>%
+    iteration <- furrr::future_map_dfc(iteration_col, GetXmlText, .xml = .xml) %>%
       dplyr::rename_with(.cols = dplyr::everything(), .fn = stringr::str_replace_all, pattern = PatColnames(.x = iteration_col))
 
     # get hit table.
@@ -23,7 +24,7 @@ parse_blastxml <- function(.xml, .col = NULL, .multi = FALSE) {
       "Hit_accession",
       "Hit_len"
     )
-    hit <- purrr::map_dfc(hit_col, GetXmlText, .xml = .xml) %>%
+    hit <- furrr::future_map_dfc(hit_col, GetXmlText, .xml = .xml) %>%
       dplyr::rename_with(.cols = dplyr::everything(), .fn = stringr::str_replace_all, pattern = PatColnames(.x = hit_col))
 
     # get hsp table.
@@ -45,7 +46,7 @@ parse_blastxml <- function(.xml, .col = NULL, .multi = FALSE) {
       "Hsp_hseq"
     )
 
-    hsp <- purrr::map_dfc(hsp_col, GetXmlText, .xml = .xml) %>%
+    hsp <- furrr::future_map_dfc(hsp_col, GetXmlText, .xml = .xml) %>%
       dplyr::rename_with(.cols = dplyr::everything(), .fn = stringr::str_replace_all, pattern = PatColnames(.x = hsp_col))
 
     # bind hit and hsp.

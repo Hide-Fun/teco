@@ -30,7 +30,7 @@ load_seq <- function(.id,
     use_url <- glue::glue(base_url)
     # download.
     utils::download.file(use_url,
-                         destfile = here::here(.filename))
+                         destfile = here::here(.path))
     Sys.sleep(0.5)
   }
 }

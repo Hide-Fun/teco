@@ -1,8 +1,9 @@
 #' Parse GenBank output xml
 #'
 #' @param .xml blast output xml.
+#' @param .gbseq GBseq list.
 #' @export
-parse_gbxml <- function(.xml) {
+parse_gbxml <- function(.xml, .gbseq = c("all", "non_seq", "manual")) {
   message("This function use furrr package internally.\nIf you run this function in parallel, set a `plan` for how the code should run.")
   # get xml size.
   size <- xml2::xml_length(.xml)
@@ -16,21 +17,40 @@ parse_gbxml <- function(.xml) {
   references_list <- furrr::future_map(gbseq_list, purrr::pluck, "GBSeq_references", "GBReference")
 
   # parse gbseq_list.
-  lev_gbeq <- list("GBSeq_locus",
-                   "GBSeq_length",
-                   "GBSeq_strandedness",
-                   "GBSeq_moltype",
-                   "GBSeq_topology",
-                   "GBSeq_division",
-                   "GBSeq_update-date",
-                   "GBSeq_create-date",
-                   "GBSeq_definition",
-                   "GBSeq_primary-accession",
-                   "GBSeq_accession-version",
-                   "GBSeq_source",
-                   "GBSeq_organism",
-                   "GBSeq_taxonomy",
-                   "GBSeq_sequence")
+  if(.gbseq == "all") {
+    lev_gbeq <- list("GBSeq_locus",
+                     "GBSeq_length",
+                     "GBSeq_strandedness",
+                     "GBSeq_moltype",
+                     "GBSeq_topology",
+                     "GBSeq_division",
+                     "GBSeq_update-date",
+                     "GBSeq_create-date",
+                     "GBSeq_definition",
+                     "GBSeq_primary-accession",
+                     "GBSeq_accession-version",
+                     "GBSeq_source",
+                     "GBSeq_organism",
+                     "GBSeq_taxonomy",
+                     "GBSeq_sequence")
+  } else if(.gbseq == "non_seq") {
+    lev_gbeq <- list("GBSeq_locus",
+                     "GBSeq_length",
+                     "GBSeq_strandedness",
+                     "GBSeq_moltype",
+                     "GBSeq_topology",
+                     "GBSeq_division",
+                     "GBSeq_update-date",
+                     "GBSeq_create-date",
+                     "GBSeq_definition",
+                     "GBSeq_primary-accession",
+                     "GBSeq_accession-version",
+                     "GBSeq_source",
+                     "GBSeq_organism",
+                     "GBSeq_taxonomy")
+  } else if(.gbseq == "manual") {
+    stop("not implemented now")
+  }
   # get lev_gbseq.
   repl_gbseq <- PatColnames(.x = lev_gbeq)
   gbseq <- furrr::future_map_dfr(gbseq_list, MapGetValue, .names = lev_gbeq) %>%

@@ -4,10 +4,12 @@
 \alias{parse_gbxml}
 \title{Parse GenBank output xml}
 \usage{
-parse_gbxml(.xml)
+parse_gbxml(.xml, .gbseq = c("all", "non_seq", "manual"))
 }
 \arguments{
 \item{.xml}{blast output xml.}
+
+\item{.gbseq}{GBseq list.}
 }
 \description{
 Parse GenBank output xml

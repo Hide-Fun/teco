@@ -11,10 +11,10 @@ parse_gbxml <- function(.xml, .gbseq = c("all", "non_seq", "manual")) {
   list <- xml2::as_list(.xml)
   # split xml.
   # each GBSeq stored in list.
-  gbseq_list <- furrr::future_map(1:size, SplitGBset, .list = list)
-  feature_table_list <- furrr::future_map(gbseq_list, purrr::pluck, "GBSeq_feature-table", "GBFeature", "GBFeature_quals")
-  other_seqids_list <- furrr::future_map(gbseq_list, purrr::pluck, "GBSeq_other-seqids")
-  references_list <- furrr::future_map(gbseq_list, purrr::pluck, "GBSeq_references", "GBReference")
+  gbseq_list <- furrr::future_map(1:size, SplitGBset, .list = list, .options = future_options(seed = 1L), .progress = TRUE)
+  feature_table_list <- furrr::future_map(gbseq_list, purrr::pluck, "GBSeq_feature-table", "GBFeature", "GBFeature_quals", .list = list, .options = future_options(seed = 1L), .progress = TRUE)
+  other_seqids_list <- furrr::future_map(gbseq_list, purrr::pluck, "GBSeq_other-seqids", .options = future_options(seed = 1L), .progress = TRUE)
+  references_list <- furrr::future_map(gbseq_list, purrr::pluck, "GBSeq_references", "GBReference", .options = future_options(seed = 1L), .progress = TRUE)
 
   # parse gbseq_list.
   if(.gbseq == "all") {
@@ -53,7 +53,7 @@ parse_gbxml <- function(.xml, .gbseq = c("all", "non_seq", "manual")) {
   }
   # get lev_gbseq.
   repl_gbseq <- PatColnames(.x = lev_gbeq)
-  gbseq <- furrr::future_map_dfr(gbseq_list, MapGetValue, .names = lev_gbeq) %>%
+  gbseq <- furrr::future_map_dfr(gbseq_list, MapGetValue, .names = lev_gbeq, .options = future_options(seed = 1L), .progress = TRUE) %>%
     dplyr::rename_with(stringr::str_replace_all,
                        .cols = dplyr::everything(),
                        pattern = repl_gbseq)
@@ -62,7 +62,7 @@ parse_gbxml <- function(.xml, .gbseq = c("all", "non_seq", "manual")) {
   lev_ref <- list("GBReference_title",
                   "GBReference_journal")
   repl_ref <- PatColnames(.x = lev_ref)
-  references <- furrr::future_map_dfr(references_list, MapGetValue, .names = lev_ref) %>%
+  references <- furrr::future_map_dfr(references_list, MapGetValue, .names = lev_ref, .options = future_options(seed = 1L), .progress = TRUE) %>%
     dplyr::rename_with(stringr::str_replace_all,
                        .cols = dplyr::everything(),
                        pattern = repl_ref)
@@ -72,8 +72,8 @@ parse_gbxml <- function(.xml, .gbseq = c("all", "non_seq", "manual")) {
     tibble::enframe(name = "id") %>%
     tidyr::unnest(value) %>%
     dplyr::mutate(name = names(value)) %>%
-    dplyr::mutate(name2 = furrr::future_map(value, names),
-                  value2 = furrr::future_map(value, unlist)) %>%
+    dplyr::mutate(name2 = furrr::future_map(value, names, .options = future_options(seed = 1L), .progress = TRUE),
+                  value2 = furrr::future_map(value, unlist), .options = future_options(seed = 1L), .progress = TRUE) %>%
     tidyr::unnest(c(name2, value2)) %>%
     tidyr::pivot_wider(names_from = "name2", values_from = "value2") %>%
     dplyr::mutate(GBQualifier_value = dplyr::if_else(
@@ -85,8 +85,8 @@ parse_gbxml <- function(.xml, .gbseq = c("all", "non_seq", "manual")) {
   # parse other_seqids_list.
   other_seqids <- other_seqids_list %>%
     tibble::enframe(name = "id") %>%
-    dplyr::mutate(value2 = furrr::future_map(value, unlist),
-                  value2 = furrr::future_map(value2, paste0, collapse = "_")) %>%
+    dplyr::mutate(value2 = furrr::future_map(value, unlist, .options = future_options(seed = 1L), .progress = TRUE),
+                  value2 = furrr::future_map(value2, paste0, collapse = "_", .options = future_options(seed = 1L), .progress = TRUE)) %>%
     tibble::add_column(name2 = "GBSeqid") %>%
     tidyr::unnest(c(name2, value2)) %>%
     dplyr::select(id, name2, value2) %>%
@@ -123,7 +123,7 @@ GetValue <- function(.list, .name) {
 
 # multiple name.
 MapGetValue <- function( .list, .names, .f = GetValue) {
-  furrr::future_map_dfc(.names, GetValue, .list = .list)
+  furrr::future_map_dfc(.names, GetValue, .list = .list, .options = future_options(seed = 1L), .progress = TRUE)
 }
 
 # make colname pattern.

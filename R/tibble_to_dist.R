@@ -14,7 +14,7 @@ tibble_to_dist <- function(.dist_tbl, .matrix = F) {
     distance = 0
   )
 
-  mat <- dist_tbl %>%
+  mat <- .dist_tbl %>%
     dplyr::bind_rows(same_pair) %>%
     tidyr::pivot_wider(names_from = "item2",
                        values_from = "distance",

@@ -24,7 +24,7 @@ make_null_model <- function(.n,
                                .model_type = .model_type,
                                .binary = .binary,
                                .id = "iteration",
-                               .options = future_options(seed = 1L),
+                               .options = furrr_options(seed = 1L),
                                .progress = TRUE)
   # calculate SES.
   null_model <- null_model %>%

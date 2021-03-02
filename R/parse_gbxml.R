@@ -11,8 +11,8 @@ parse_gbxml <- function(.xml, .gbseq = c("all", "non_seq", "manual")) {
   list <- xml2::as_list(.xml)
   # split xml.
   # each GBSeq stored in list.
-  gbseq_list <- furrr::future_map(1:size, SplitGBset, .list = list, .options = furrr::furrr_options(seed = 1L), .progress = TRUE)
-  feature_table_list <- furrr::future_map(gbseq_list, purrr::pluck, "GBSeq_feature-table", "GBFeature", "GBFeature_quals", .list = list, .options = furrr::furrr_options(seed = 1L), .progress = TRUE)
+  gbseq_list <- furrr::future_map(1:size, ~SplitGBset(.list = list, .num = .x), .options = furrr::furrr_options(seed = 1L), .progress = TRUE)
+  feature_table_list <- furrr::future_map(gbseq_list, purrr::pluck, "GBSeq_feature-table", "GBFeature", "GBFeature_quals", .options = furrr::furrr_options(seed = 1L), .progress = TRUE)
   other_seqids_list <- furrr::future_map(gbseq_list, purrr::pluck, "GBSeq_other-seqids", .options = furrr::furrr_options(seed = 1L), .progress = TRUE)
   references_list <- furrr::future_map(gbseq_list, purrr::pluck, "GBSeq_references", "GBReference", .options = furrr::furrr_options(seed = 1L), .progress = TRUE)
 
@@ -73,7 +73,7 @@ parse_gbxml <- function(.xml, .gbseq = c("all", "non_seq", "manual")) {
     tidyr::unnest(value) %>%
     dplyr::mutate(name = names(value)) %>%
     dplyr::mutate(name2 = furrr::future_map(value, names, .options = furrr::furrr_options(seed = 1L), .progress = TRUE),
-                  value2 = furrr::future_map(value, unlist), .options = furrr::furrr_options(seed = 1L), .progress = TRUE) %>%
+                  value2 = furrr::future_map(value, unlist, .options = furrr::furrr_options(seed = 1L), .progress = TRUE)) %>%
     tidyr::unnest(c(name2, value2)) %>%
     tidyr::pivot_wider(names_from = "name2", values_from = "value2") %>%
     dplyr::mutate(GBQualifier_value = dplyr::if_else(

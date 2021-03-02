@@ -4,18 +4,18 @@
 \alias{make_null_model}
 \title{Make null model matrix.}
 \usage{
-make_null_model(.n, .mat, .model_type, .method, .binary, ...)
+make_null_model(.n, .comm, .tree, .model_type, .method, .weighted, ...)
 }
 \arguments{
 \item{.n}{number of iteration.}
 
-\item{.mat}{community data matrix.}
+\item{.comm}{community data matrix.}
 
 \item{.model_type}{randomization method, see vegan::randomizeMatrix}
 
 \item{.method}{dissimilarity index. see vegan::vegdist.}
 
-\item{.binary}{convert `.mat` to presence/absence data.}
+\item{.weighted}{convert `.comm` to presence/absence data.}
 
 \item{...}{augument passed through `.f`.}
 }

@@ -76,9 +76,9 @@ CalcNullModelTree <- function(.comm,
     }
     dist <- as.dist(get_unifrac(.com = .comm, .tree = shuffule_tree, .alpha = 0.5, .data_type = .weighted))
   } else if(.method == "beta.mpd") {
-    dist <- comdist(comm = .comm, dis = cophenetic(shuffule_tree), abundance.weighted = .weighted)
+    dist <- picante::comdist(comm = .comm, dis = cophenetic(shuffule_tree), abundance.weighted = .weighted)
   } else if(.method == "beta.mntd") {
-    dist <- comdistnt(comm = .comm, dis = cophenetic(shuffule_tree), abundance.weighted = .weighted)
+    dist <- picante::comdistnt(comm = .comm, dis = cophenetic(shuffule_tree), abundance.weighted = .weighted)
   }
   null_model <- tidy_dist(dist) %>%
     dplyr::mutate(pair = stringr::str_c(item1, item2, sep = "-")) %>%

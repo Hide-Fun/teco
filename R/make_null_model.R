@@ -58,7 +58,7 @@ CalcNullModel <- function(.comm,
   rmat <- picante::randomizeMatrix(samp = .comm, null.model = .model_type, ...)
   dist <- try(vegan::vegdist(x = rmat, method = .method, binary = .weighted))
   null_model <- tidy_dist(dist) %>%
-    dplyr::mutate(pair = stringr::str_c(item1, item2, sep = "-")) %>%
+    dplyr::mutate(pair = stringr::str_c(item1, item2, sep = "_")) %>%
     dplyr::select(-item1, -item2)
   return(null_model)
 }
@@ -81,7 +81,7 @@ CalcNullModelTree <- function(.comm,
     dist <- picante::comdistnt(comm = .comm, dis = cophenetic(shuffule_tree), abundance.weighted = .weighted)
   }
   null_model <- tidy_dist(dist) %>%
-    dplyr::mutate(pair = stringr::str_c(item1, item2, sep = "-")) %>%
+    dplyr::mutate(pair = stringr::str_c(item1, item2, sep = "_")) %>%
     dplyr::select(-item1, -item2)
   return(null_model)
 }

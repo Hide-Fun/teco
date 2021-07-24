@@ -11,6 +11,7 @@ get_unifrac <- function(.com, .tree, .alpha = 0.5, .data_type) {
                                  alpha = .alpha)
   unifracs <- gunifrac$unifracs
   if(.data_type == "W") {
+    .alpha <- 1
     W <- paste0("d_", as.character(.alpha))
     dist_mat <- unifracs[, , W]
   } else if(.data_type == "UW") {
@@ -19,6 +20,9 @@ get_unifrac <- function(.com, .tree, .alpha = 0.5, .data_type) {
     dist_mat <- unifracs[, , "d_VAW"]
   } else if(.data_type == "ALL"){
     dist_mat <- unifracs
+  } else {
+    W <- paste0("d_", as.character(.alpha))
+    dist_mat <- unifracs[, , W]
   }
   return(dist_mat)
 }

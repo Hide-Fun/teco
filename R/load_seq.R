@@ -23,14 +23,14 @@ load_seq <- function(.id,
       base_url <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&id={.ids}&rettype=fasta&retmode=text"
     } else {
       # url
-      base_url <-
-        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&id={.ids}&rettype=gb&retmode=xml"
+      base_url <- "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&id={.ids}&rettype=gb&retmode=xml"
     }
     # add accession id.
     use_url <- glue::glue(base_url)
     # download.
     utils::download.file(use_url,
-                         destfile = here::here(.path))
+                         destfile = here::here(.path),
+                         quiet = FALSE)
     Sys.sleep(0.5)
   }
 }

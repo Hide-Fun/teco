@@ -12,6 +12,8 @@ beta_dist <- function(.method, .comm, .tree, .alpha = 1, .weighted) {
   } else if(.method == "unifrac") {
     if(.weighted == T) {
       .weighted <- "W"
+    } else if(.weighted == "VAW") {
+      .weighted <- "VAW"
     } else {
       .weighted <- "UW"
     }

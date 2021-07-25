@@ -3,9 +3,10 @@
 #' @param .method dissimilarity index.
 #' @param .comm community data matix.
 #' @param .tree an object of class "phylo".
+#' @param .alpha passed through Gunifrac
 #' @param .weighted logical, presence/absence or abundance.
 #' @export
-beta_dist <- function(.method, .comm, .tree, .weighted) {
+beta_dist <- function(.method, .comm, .tree, .alpha = 1, .weighted) {
   if(!.method %in% c("unifrac", "beta.mpd", "beta.mntd")) {
     dist <- vegan::vegdist(x = .comm, method = .method, binary = .weighted)
   } else if(.method == "unifrac") {
@@ -14,7 +15,7 @@ beta_dist <- function(.method, .comm, .tree, .weighted) {
     } else {
       .weighted <- "UW"
     }
-    dist <- as.dist(get_unifrac(.com = .comm, .tree = .tree, .alpha = 0.5, .data_type = .weighted))
+    dist <- as.dist(get_unifrac(.com = .comm, .tree = .tree, .alpha = .alpha, .data_type = .weighted))
   } else if(.method == "beta.mpd") {
     dist <- picante::comdist(comm = .comm, dis = cophenetic(.tree), abundance.weighted = .weighted)
   } else if(.method == "beta.mntd") {

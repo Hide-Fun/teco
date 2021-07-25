@@ -4,7 +4,7 @@
 \alias{beta_dist}
 \title{Calculate beta diversity.}
 \usage{
-beta_dist(.method, .comm, .tree, .weighted)
+beta_dist(.method, .comm, .tree, .alpha = 1, .weighted)
 }
 \arguments{
 \item{.method}{dissimilarity index.}
@@ -12,6 +12,8 @@ beta_dist(.method, .comm, .tree, .weighted)
 \item{.comm}{community data matix.}
 
 \item{.tree}{an object of class "phylo".}
+
+\item{.alpha}{passed through Gunifrac}
 
 \item{.weighted}{logical, presence/absence or abundance.}
 }

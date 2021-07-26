@@ -20,9 +20,9 @@ tibble_to_dist <- function (.dist_tbl, .col_name = "ses", .matrix = F)
   mat <- dist_tbl %>%
     dplyr::bind_rows(same_pair) %>%
     tidyr::pivot_wider(names_from = "item2",
-                       values_from = "ses",
+                       values_from = .col_name,
                        values_fill = 0) %>%
-    dplyr::relocate(item1, col) %>%
+    dplyr::relocate(item1, all_of(col)) %>%
     dplyr::arrange(factor(item1, col)) %>%
     tibble::column_to_rownames("item1") %>%
     as.matrix()

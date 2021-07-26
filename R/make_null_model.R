@@ -45,7 +45,8 @@ make_null_model <- function(.n,
     dplyr::rowwise() %>%
     dplyr::mutate(mean = mean(dplyr::c_across(where(is.numeric))),
                   sd = sd(dplyr::c_across(where(is.numeric)))) %>%
-    dplyr::ungroup()
+    dplyr::ungroup() %>%
+    tidyr::separate(pair, c("item1", "item2"), sep = "_")
   return(null_model)
 }
 

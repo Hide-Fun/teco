@@ -4,10 +4,12 @@
 \alias{tibble_to_dist}
 \title{Convert tibble to dist.}
 \usage{
-tibble_to_dist(.dist_tbl, .matrix = F)
+tibble_to_dist(.dist_tbl, .col_name = "ses", .matrix = F)
 }
 \arguments{
 \item{.dist_tbl}{tibble, data.frame}
+
+\item{.col_name}{column name.}
 
 \item{.matrix}{output}
 }
